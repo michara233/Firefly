@@ -1,12 +1,12 @@
 ---
 title: Godot4,多窗口显示同场景实现方式
-published: 2026-4-19
+published: 2026-04-19
 pinned: false
 description: 在godot中实现多窗口单场景的显示。
 tags: [godot, 游戏开发]
 category: 特定功能实现
 image: ./images/godot_windows.gif
-slug: code-examples
+slug: godot-windows
 ---
 
 # 大概半年前大一学godot时在油管学到的，快忘光了用AI回忆了下分享出来，如有不足请在评论区指出。
