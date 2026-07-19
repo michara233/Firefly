@@ -76,17 +76,17 @@ export const backgroundWallpaper: BackgroundWallpaperConfig = {
 			// 是否允许用户通过控制面板切换横幅标题显示
 			switchable: true,
 			// 主页横幅主标题
-			title: "Lovely firefly!",
+			title: "这是一行正式的测试文本",
 			// 主页横幅主标题字体大小
 			titleSize: "3.8rem",
 			// 主页横幅副标题
 			subtitle: [
-				"In Reddened Chrysalis, I Once Rest",
-				"From Shattered Sky, I Free Fall",
-				"Amidst Silenced Stars, I Deep Sleep",
-				"Upon Lighted Fyrefly, I Soon Gaze",
-				"From Undreamt Night, I Thence Shine",
-				"In Finalized Morrow, I Full Bloom",
+				"Let, think",
+				"感情将会创造出奇迹，我一直相信，人与人之间的深情，会化作最纯粹最强大的力量",
+				"当一个人真正想要改变世界时，才会发现个人的力量是多么渺小",
+				"世事难两全，有得必有失，必须取舍",
+				"最光明的天使也许会堕落，可天使总是光明的",
+				"所谓天赋，是尚未兑现的才能，所以你觉得你自己并没有什么特殊之处，这很正常",
 			],
 			// 主页横幅副标题字体大小
 			subtitleSize: "1.5rem",
