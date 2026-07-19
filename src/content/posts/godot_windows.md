@@ -5,7 +5,7 @@ pinned: false
 description: 在godot中实现多窗口单场景的显示。
 tags: [godot, 游戏开发]
 category: 特定功能实现
-image: ./images/godot_windows.gif
+image: ./images/godot__windows.gif
 slug: godot-windows
 ---
 
