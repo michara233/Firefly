@@ -57,7 +57,7 @@ const isPublic = src.startsWith("/");
 let img: ImageMetadata | null = null;
 if (isLocal) {
 	const files = import.meta.glob<ImageMetadata>(
-		"../../**/*.{png,jpg,jpeg,webp,avif}",
+		"../../**/*.{png,jpg,jpeg,webp,avif,gif}",
 		{
 			import: "default",
 		},
@@ -81,7 +81,7 @@ const fallbackPath = coverImageConfig.randomCoverImage.fallback;
 const isFallbackPublic = fallbackPath?.startsWith("/");
 if (fallbackPath && !isLocal && !isFallbackPublic) {
 	const files = import.meta.glob<ImageMetadata>(
-		"../../**/*.{png,jpg,jpeg,webp,avif}",
+		"../../**/*.{png,jpg,jpeg,webp,avif,gif}",
 		{
 			import: "default",
 		},
