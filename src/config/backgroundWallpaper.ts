@@ -43,7 +43,7 @@ export const backgroundWallpaper: BackgroundWallpaperConfig = {
 		// 桌面背景图片（支持单张或多张随机）
 		// desktop: "assets/images/DesktopWallpaper/d1.avif",
 		desktop: [
-			"assets/images/DesktopWallpaper/d1.avif",
+			"assets/images/DesktopWallpaper/d1.webp",
 			"assets/images/DesktopWallpaper/d2.avif",
 			"assets/images/DesktopWallpaper/d3.avif",
 			"assets/images/DesktopWallpaper/d4.avif",
@@ -65,7 +65,7 @@ export const backgroundWallpaper: BackgroundWallpaperConfig = {
 		// 支持远程视频URL，本地视频请放在 public/assets/videos/ 目录下
 		// playerUrl: "/assets/videos/firefly.mp4",
 		playerUrl: [
-			"public/assets/videos/1.mp4",
+			"/assets/videos/1.mp4",
 		],
 	},
 	// 横幅壁纸和全屏壁纸共享配置
@@ -73,7 +73,7 @@ export const backgroundWallpaper: BackgroundWallpaperConfig = {
 		// 壁纸遮罩暗度，让横幅文字显示更清晰，0-1之间，值越大越暗
 		dimOpacity: 0.2,
 		// 多视频播放模式："order" 顺序循环，"random" 随机切换（仅当 playerUrl 为数组时生效）
-		playerMode: "random",
+		playerMode: "order",
 		// 主页横幅文字
 		homeText: {
 			// 是否启用主页横幅文字
