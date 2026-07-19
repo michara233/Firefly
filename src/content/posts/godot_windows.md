@@ -19,7 +19,7 @@ slug: godot-windows
 
 ## 一、最终效果预览
 
-![img](https://i-blog.csdnimg.cn/direct/21c02f3d490b480f92c91ebe0c5ee377.gif)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)编辑
+![最终效果预览](./images/godot__windows.gif)
 
 - 仅显示子窗口，窗口大小位置可由检查器或脚本控制
 - 两个窗口共享同一个 2D 世界，相机随窗口位置实时联动
@@ -36,8 +36,6 @@ Node（挂载全局脚本）
 ├─ Window2（子2窗口，内置 Camera2D）（可添加更多子窗口）
 └─ Node2D（存放所有游戏实体：角色、地面、碰撞等）（建议用单独的场景）
 ```
-
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 - 每个窗口节点下挂载一个`Camera2D节点`控制窗口显示区域
 
@@ -77,8 +75,6 @@ func _ready():
     _MainWindow.size = _MainWindow.min_size
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
-
 ------
 
 ## 四、Window / Window2 窗口脚本
@@ -111,8 +107,6 @@ func get_camera_pos_from_window() -> Vector2i:
     return position + velocity
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
-
 ------
 
 ## 五、关键配置说明
@@ -128,8 +122,6 @@ func get_camera_pos_from_window() -> Vector2i:
    ```
    _MainWindow.gui_embed_subwindows = false
    ```
-
-   ![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
    否则子窗口会嵌入主窗口，无法拖动。
 
