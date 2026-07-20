@@ -131,7 +131,7 @@ const lqipProps = isLocal
     {fadeIn && <div class="lqip-placeholder absolute inset-0 pointer-events-none" style={lqipProps.style} aria-hidden="true"></div>}
     <div class="transition absolute inset-0 dark:bg-black/10 pointer-events-none"></div>
     {isLocal && gifUrl && (
-        <img src={gifUrl} alt={alt || ""} class={imageClass} style={imageStyle} loading={loading} fetchpriority={fetchpriority} />
+        <img src={gifUrl} alt={alt || ""} class={imageClass} style={imageStyle} loading={loading} fetchpriority={fetchpriority} decoding="async" />
     )}
     {isLocal && img && !isGif && usePicture && (
         <Picture
