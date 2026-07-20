@@ -6,6 +6,8 @@ description: 更新中ing...
 tags: [unity, 游戏开发,基础知识]
 category: 基础知识
 slug: unity学习速查
+updata: 
+pinned: true
 ---
 
 # Unity C# 核心脚本速查笔记（优化版）
