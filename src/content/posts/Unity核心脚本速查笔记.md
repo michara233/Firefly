@@ -1,7 +1,6 @@
 ---
 title: unity学习速查
 published: 2026-07-20
-pinned: false
 description: 更新中ing...
 tags: [unity, 游戏开发,基础知识]
 category: 基础知识
