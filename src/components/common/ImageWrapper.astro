@@ -58,13 +58,14 @@ const isLocal = !(
 	src.startsWith("data:")
 );
 const isPublic = src.startsWith("/");
+const isGif = src.toLowerCase().endsWith(".gif");
 
 // TODO temporary workaround for images dynamic import
 // https://github.com/withastro/astro/issues/3373
 let img: ImageMetadata | null = null;
 if (isLocal) {
 	const files = import.meta.glob<ImageMetadata>(
-		"../../**/*.{png,jpg,jpeg,webp,avif}",
+		"../../**/*.{png,jpg,jpeg,webp,avif,gif}",
 		{
 			import: "default",
 		},
@@ -110,7 +111,10 @@ const lqipProps = isLocal
 <div id={id} class:list={[className, 'overflow-hidden relative']}>
     {fadeIn && <div class="lqip-placeholder absolute inset-0 pointer-events-none" style={lqipProps.style} aria-hidden="true"></div>}
     <div class="transition absolute inset-0 dark:bg-black/10 pointer-events-none"></div>
-    {isLocal && img && usePicture && (
+    {isLocal && img && isGif && (
+        <img src={img.src} alt={alt || ""} class={imageClass} style={imageStyle} loading={loading} fetchpriority={fetchpriority} />
+    )}
+    {isLocal && img && !isGif && usePicture && (
         <Picture
             src={img}
             alt={alt || ""}
@@ -123,7 +127,7 @@ const lqipProps = isLocal
             {...responsiveProps}
         />
     )}
-    {isLocal && img && !usePicture && (
+    {isLocal && img && !isGif && !usePicture && (
         <Image
             src={img}
             alt={alt || ""}
