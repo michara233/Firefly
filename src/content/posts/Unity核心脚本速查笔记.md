@@ -8,7 +8,7 @@ slug: unity学习速查
 pinned: true
 ---
 
-# Unity C# 核心脚本速查笔记（优化版）
+# Unity C# 核心脚本速查笔记
 
 ## 一、MonoBehaviour 生命周期函数
 
@@ -132,6 +132,7 @@ gameObject.tag = "Enemy";      // 修改标签
 gameObject.layer = 8;          // 修改层级
 gameObject.activeSelf;         // 是否激活（只读）
 gameObject.isStatic;           // 是否静态
+gameObject.transform;          // 变换组件（等价于 transform）
 ```
 
 ### 2. 创建与查找物体
@@ -167,6 +168,8 @@ DestroyImmediate(gameObject);
 DontDestroyOnLoad(gameObject);
 ```
 
+> **注意：** 继承 MonoBehaviour 后，`Instantiate`、`Destroy`、`DontDestroyOnLoad` 可省略 `GameObject.` 直接调用
+
 ### 4. 常用成员方法
 ```csharp
 // 添加组件
@@ -180,6 +183,13 @@ gameObject.SetActive(true);
 gameObject.SetActive(false);
 ```
 
+### 5. 不常用方法
+```csharp
+// 向自身及子物体发送消息调用方法
+gameObject.SendMessage("方法名");
+gameObject.SendMessageUpwards("方法名"); // 同时向父物体传播
+```
+
 ---
 
 ## 五、Time 时间系统
@@ -191,6 +201,7 @@ gameObject.SetActive(false);
 | `Time.time` | 游戏开始到现在的总时间（计时用） | ✅ |
 | `Time.unscaledTime` | 不受时间缩放影响的总时间 | ❌ |
 | `Time.fixedDeltaTime` | 物理帧间隔时间 | ✅ |
+| `Time.fixedUnscaledDeltaTime` | 不受时间缩放影响的物理帧间隔 | ❌ |
 | `Time.frameCount` | 游戏运行总帧数 | - |
 | `Time.timeScale` | 时间缩放比例（0=暂停，1=正常，2=二倍速） | - |
 
@@ -207,6 +218,7 @@ Vector3 pos = new Vector3(x, y, z);
 
 // 常用常量
 Vector3.zero     // (0, 0, 0) 原点
+Vector3.one      // (1, 1, 1)
 Vector3.right    // (1, 0, 0)
 Vector3.left     // (-1, 0, 0)
 Vector3.up       // (0, 1, 0)
@@ -253,9 +265,12 @@ transform.eulerAngles       // 世界欧拉角
 transform.localEulerAngles  // 本地欧拉角（面板显示的值）
 ```
 
+> 修改方式同 position，需整体赋值，不能单独改某一分量
+
 ### 2. 旋转方法
 ```csharp
 // 自转（绕自身轴旋转）
+// X轴：抬头低头  Y轴：左右摇头  Z轴：偏头
 transform.Rotate(new Vector3(0, 90, 0) * Time.deltaTime);
 
 // 绕指定轴旋转
@@ -296,7 +311,7 @@ Transform parent = transform.parent;
 
 // 设置/移除父物体
 transform.parent = null;                    // 解除父子关系
-transform.SetParent(newParent, true);       // 第二参数：是否保留世界坐标
+transform.SetParent(newParent, true);       // 第二参数：是否保留世界坐标/缩放/旋转
 ```
 
 ### 2. 子物体操作
@@ -339,13 +354,16 @@ Vector3 worldDir = transform.TransformDirection(localDir);
 
 ### 1. 鼠标输入
 ```csharp
-// 鼠标位置（屏幕像素坐标，左下角为原点）
+// 鼠标位置（屏幕像素坐标，左下角为原点，X向右Y向上，返回Vector3但z=0）
 Vector3 mousePos = Input.mousePosition;
 
 // 鼠标按键：0=左键，1=右键，2=中键
 Input.GetMouseButton(0);      // 按住持续触发
 Input.GetMouseButtonDown(0);  // 按下瞬间触发
 Input.GetMouseButtonUp(0);    // 抬起瞬间触发
+
+// 鼠标滚轮（-1向下，0无，1向上）
+float scroll = Input.mouseScrollDelta.y;
 ```
 
 ### 2. 键盘输入
@@ -353,6 +371,9 @@ Input.GetMouseButtonUp(0);    // 抬起瞬间触发
 Input.GetKey(KeyCode.W);          // 按住持续触发
 Input.GetKeyDown(KeyCode.Space);  // 按下瞬间触发
 Input.GetKeyUp(KeyCode.Space);    // 抬起瞬间触发
+
+// 字符串写法（不推荐，写错无报错，注意小写）
+Input.GetKeyDown("w");
 ```
 
 ### 3. 轴输入（Horizontal / Vertical）
@@ -362,3 +383,105 @@ float v = Input.GetAxis("Vertical");     // W/S 或 ↑/↓ 控制
 
 float hRaw = Input.GetAxisRaw("Horizontal"); // 只有 -1 / 0 / 1 三档，无过渡
 ```
+
+> 轴名称可在 Edit → Project Settings → Input Manager 中查看和自定义
+
+### 4. 其他输入
+```csharp
+// 任意键/鼠标
+Input.anyKey;       // 是否有任意键或鼠标长按
+Input.anyKeyDown;   // 是否有任意键或鼠标按下
+
+// 这一帧的键盘输入字符串
+string input = Input.inputString;
+
+// 获取已连接的手柄名称
+string[] joysticks = Input.GetJoystickNames();
+```
+
+### 5. 移动设备触摸
+```csharp
+if (Input.touchCount > 0)
+{
+    Touch touch = Input.touches[0];
+    // touch.position 触摸位置
+    // touch.phase 触摸阶段（Began/Moved/Ended等）
+}
+
+// 是否启用多点触控
+Input.multiTouchEnabled = false;
+```
+
+### 6. 陀螺仪
+```csharp
+Input.gyro.enabled = true;    // 开启陀螺仪
+Vector3 gravity = Input.gyro.gravity; // 重力加速度向量
+```
+
+---
+
+## 十二、Screen 屏幕系统
+
+### 1. 静态属性
+```csharp
+// 当前显示器分辨率
+Resolution res = Screen.currentResolution;
+int width = res.width;
+int height = res.height;
+
+// 游戏窗口宽高
+int windowWidth = Screen.width;
+int windowHeight = Screen.height;
+
+// 屏幕休眠模式（永不熄屏）
+Screen.sleepTimeout = SleepTimeout.NeverSleep;
+
+// 全屏模式
+Screen.fullScreenMode = FullScreenMode.FullScreenWindow;
+```
+
+### 2. 静态方法
+```csharp
+// 设置分辨率（宽，高，是否全屏）
+Screen.SetResolution(1920, 1080, false);
+```
+
+---
+
+## 十三、Camera 摄像机参数
+
+### 1. Clear Flags（清除标记）
+| 模式 | 说明 | 适用场景 |
+|------|------|----------|
+| Skybox | 天空盒填充背景 | 3D 游戏常用 |
+| Solid Color | 纯色填充背景 | 2D / UI 场景 |
+| Depth Only | 只绘制深度，背景透明 | 分层渲染叠加 |
+| Don't Clear | 不清除，上一帧画面残留 | 特殊效果 |
+
+### 2. Culling Mask（剔除遮罩）
+选择性渲染指定 Layer 的物体，可用于分层渲染
+
+### 3. Projection（投影模式）
+#### Perspective（透视模式 - 3D 常用）
+- **Field of View**：视场角大小
+- **FOV Axis**：视场角计算轴向（竖直/水平）
+- **Physical Camera**：模拟真实相机参数
+
+#### Orthographic（正交模式 - 2D 常用）
+- **Size**：正交摄像机摄制范围
+
+#### 通用
+- **Clipping Planes**：裁剪平面（Near / Far），可渲染的距离范围
+
+### 4. Depth（深度）
+- 值越大越后渲染，会遮盖之前渲染的画面
+- **用法**：多摄像机分层渲染（如 UI 摄像机 + 游戏摄像机），配合 Clear Flags 和 Culling Mask 使用
+
+### 5. Target Texture（渲染纹理）
+将摄像机画面渲染到一张 Render Texture 上，可用于小地图、监控画面等
+
+### 6. Occlusion Culling（遮挡剔除）
+被其他物体完全挡住的物体不会被渲染，提升性能
+
+### 7. Viewport Rect（视口矩形）
+调整摄像机画面在屏幕上的位置和大小（XY 为位置，WH 为宽高，取值 0~1），可用于分屏、画中画等效果
