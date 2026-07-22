@@ -8,6 +8,7 @@ slug: unity学习速查
 pinned: true
 ---
 
+
 # Unity C# 核心脚本速查笔记
 
 ## 一、MonoBehaviour 生命周期函数
@@ -485,3 +486,72 @@ Screen.SetResolution(1920, 1080, false);
 
 ### 7. Viewport Rect（视口矩形）
 调整摄像机画面在屏幕上的位置和大小（XY 为位置，WH 为宽高，取值 0~1），可用于分屏、画中画等效果
+
+---
+
+## 十四、Camera 代码 API
+
+### 1. 静态成员
+```csharp
+// 获取主摄像机（需要摄像机 Tag 为 MainCamera）
+Camera mainCam = Camera.main;
+
+// 当前场景摄像机数量
+int camCount = Camera.allCamerasCount;
+
+// 获取所有摄像机
+Camera[] allCameras = Camera.allCameras;
+```
+
+### 2. 渲染委托（生命周期回调）
+```csharp
+// 剔除前处理
+Camera.onPreCull += (cam) => { };
+
+// 渲染前处理
+Camera.onPreRender += (cam) => { };
+
+// 渲染后处理
+Camera.onPostRender += (cam) => { };
+```
+
+### 3. 常用成员属性
+```csharp
+// 面板上的参数基本都可通过代码读写
+Camera.main.depth = 10;
+Camera.main.fieldOfView = 60f;
+```
+
+### 4. 坐标转换
+```csharp
+// 世界坐标 → 屏幕坐标（可用于 3D 人物头顶血条跟随）
+Vector3 screenPos = Camera.main.WorldToScreenPoint(transform.position);
+
+// 屏幕坐标 → 世界坐标（注意 Z 值需要设置距离摄像机的深度）
+Vector3 mouseWorld = Input.mousePosition;
+mouseWorld.z = 5f; // 距离摄像机的距离
+Vector3 worldPos = Camera.main.ScreenToWorldPoint(mouseWorld);
+```
+
+---
+
+## 十五、光源组件（Light）
+
+### 1. 光源类型
+| 类型 | 说明 | 适用场景 |
+|------|------|----------|
+| Directional | 平行光，无距离衰减，模拟太阳光 | 场景主光源、太阳光 |
+| Point | 点光源，向四周发散，有范围 | 灯泡、火把、室内光源 |
+| Spot | 聚光灯，锥形照射范围 | 手电筒、探照灯、舞台灯 |
+| Area | 区域光（仅烘焙生效） | 室内面光源、柔光效果 |
+
+### 2. 常用属性
+```csharp
+Light light = GetComponent<Light>();
+
+light.color = Color.red;       // 光源颜色
+light.intensity = 2f;          // 光照强度
+light.range = 10f;             // 光照范围（Point/Spot）
+light.spotAngle = 30f;         // 聚光灯角度（Spot）
+light.type = LightType.Point;  // 切换光源类型
+```
