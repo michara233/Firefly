@@ -284,7 +284,7 @@ export default defineConfig({
 				name: "米猹",
 				short_name: "米猹",
 				description: "个人unity学习分享记录网站",
-				theme_color: "#2563eb",
+				theme_color: "#ffffff",
 				background_color: "#ffffff",
 				display: "standalone",
 				color_scheme: "light dark",
