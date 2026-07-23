@@ -1,0 +1,31 @@
+{
+  "name": "米猹",
+  "short_name": "米猹",
+  "description": "个人unity学习分享记录网站",
+  "theme_color": "#1c1c28",
+  "background_color": "#1c1c28",
+  "display": "standalone",
+  "color_scheme": "dark",
+  "scope": "/",
+  "start_url": "/",
+  "lang": "zh-CN",
+  "icons": [
+    {
+      "src": "/pwa-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
