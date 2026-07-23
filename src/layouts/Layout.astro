@@ -154,7 +154,13 @@ const siteLang = lang.replace("_", "-");
       content={description || siteConfig.description || pageTitle}
     />
 
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#2563eb" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="米猹" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
     <meta name="generator" content={Astro.generator} />
     {
       favicons.map((favicon) => (
@@ -552,6 +558,22 @@ const siteLang = lang.replace("_", "-");
 
     <!-- Font Setup (Astro Font API) -->
     <FontSetup />
+
+    <!-- PWA Service Worker Registration -->
+    <script is:inline>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("/sw.js").then(
+            (registration) => {
+              console.log("SW registered:", registration.scope);
+            },
+            (error) => {
+              console.log("SW registration failed:", error);
+            }
+          );
+        });
+      }
+    </script>
   </head>
   <body
     class="min-h-screen"

@@ -9,6 +9,7 @@ import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "astro/config";
 import expressiveCode from "astro-expressive-code";
 import icon from "astro-icon";
+import AstroPWA from "@vite-pwa/astro";
 import katex from "katex";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeComponents from "rehype-components"; /* Render the custom directive content */
@@ -227,6 +228,83 @@ export default defineConfig({
 			},
 		}),
 		mdx(),
+		AstroPWA({
+			registerType: "autoUpdate",
+			workbox: {
+				maximumFileSizeToCacheInBytes: 8 * 1024 * 1024, // 8 MB for large assets
+				globPatterns: ["**/*.{js,css,html,svg,png,avif,webp,ico,woff,woff2,ttf,eot,json,xml}"],
+				runtimeCaching: [
+					{
+						urlPattern: /^https?:\/\/.*\/posts\/.*/,
+						handler: "NetworkFirst",
+						options: {
+							cacheName: "blog-posts",
+							expiration: {
+								maxEntries: 100,
+								maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days
+							},
+						},
+					},
+					{
+						urlPattern: /^https?:\/\/.*\/page\/.*/,
+						handler: "NetworkFirst",
+						options: {
+							cacheName: "blog-pages",
+							expiration: {
+								maxEntries: 50,
+								maxAgeSeconds: 60 * 60 * 24 * 7,
+							},
+						},
+					},
+					{
+						urlPattern: /\.(?:png|jpg|jpeg|gif|avif|webp|svg|ico)$/,
+						handler: "CacheFirst",
+						options: {
+							cacheName: "images",
+							expiration: {
+								maxEntries: 200,
+								maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+							},
+						},
+					},
+					{
+						urlPattern: /\.(?:js|css|woff2?|ttf|eot)$/,
+						handler: "CacheFirst",
+						options: {
+							cacheName: "static-assets",
+							expiration: {
+								maxEntries: 200,
+								maxAgeSeconds: 60 * 60 * 24 * 30,
+							},
+						},
+					},
+				],
+			},
+			manifest: {
+				name: "米猹",
+				short_name: "米猹",
+				description: "个人unity学习分享记录网站",
+				theme_color: "#2563eb",
+				background_color: "#ffffff",
+				display: "standalone",
+				scope: "/",
+				start_url: "/",
+				lang: "zh-CN",
+				icons: [
+					{
+						src: "/pwa-192x192.png",
+						sizes: "192x192",
+						type: "image/png",
+					},
+					{
+						src: "/pwa-512x512.png",
+						sizes: "512x512",
+						type: "image/png",
+						purpose: "any",
+					},
+				],
+			},
+		}),
 	],
 	markdown: {
 		processor: unified({

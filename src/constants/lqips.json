@@ -45,5 +45,10 @@
   "src:assets/images/DesktopWallpaper/d1.webp": "e6d6cea5d5e6d3d1c9",
   "src:content/posts/images/godot__windows.gif": "b4c8b7536853376521",
   "src:content/posts/images/cocos.gif": "42758d57819687adb8",
-  "src:assets/images/DesktopWallpaper/1.gif": "74a18668cfa294a393"
+  "src:assets/images/DesktopWallpaper/1.gif": "74a18668cfa294a393",
+  "public:pwa-maskable-512x512.png": "72d3af9ee699aced93",
+  "public:pwa-512x512.png": "72d3af9ee699aced93",
+  "public:pwa-192x192.png": "72d7af9ee69eaced93",
+  "public:apple-touch-icon.png": "72d7af9ee69eaced93",
+  "src:assets/images/道具_理智.png": "8483848d8b8b6b6868"
 }
