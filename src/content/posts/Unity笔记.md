@@ -9,7 +9,7 @@ slug: unity-core-scripting-cheatsheet
 pinned: true
 ---
 
-# Unity 核心脚本速查笔记
+# Unity 笔记
 
 > 基于 Unity 学习笔记整理，重新分类结构、统一术语、补充代码示例，方便复习查询。
 
