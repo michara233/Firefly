@@ -1,5 +1,5 @@
 ---
-title: Unity 核心脚本速查笔记
+title: Unity 笔记
 published: 2026-07-20
 updated: 2026-07-28
 description: Unity 常用 API 速查 — 生命周期、Transform、Input、Camera、物理等，持续更新中
