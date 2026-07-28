@@ -559,6 +559,10 @@ Screen.SetResolution(1920, 1080, FullScreenMode.FullScreenWindow);
 | `Target Texture` | 渲染到 Render Texture |
 | `Viewport Rect` | 视口范围（x, y, w, h），用于分屏/多视角 |
 | `Occlusion Culling` | 遮挡剔除，被挡物体不渲染 |
+| `Allow HDR` | 是否允许高动态范围渲染（HDR） |
+| `Allow MSAA` | 是否允许多重采样抗锯齿 |
+| `Allow Dynamic Resolution` | 是否允许动态分辨率渲染 |
+| `Target Display` | 指定输出到哪个显示器，用于多屏平台游戏开发 |
 
 ### 11.2 代码获取摄像机
 
@@ -671,6 +675,21 @@ rb.isKinematic = false;
 // 冻结位置/旋转
 rb.constraints = RigidbodyConstraints.FreezeRotation;
 ```
+
+**参数详解：**
+
+| 参数 | 说明 |
+|---|---|
+| `Mass` | 质量（默认千克）。质量越大，惯性越大 |
+| `Drag` | 空气阻力。用力移动对象时的阻力大小，0 表示无阻力 |
+| `Angular Drag` | 角阻力。扭矩旋转对象时的空气阻力大小，0 表示无阻力 |
+| `Use Gravity` | 是否受重力影响 |
+| `Is Kinematic` | 启用后物体不受物理引擎驱动，仅可通过 Transform 操作。适用于移动平台、动画化铰链关节等 |
+| `Interpolate` | 插值运算，让刚体移动更平滑 |
+| `Collision Detection` | 碰撞检测模式：Discrete / Continuous / Continuous Dynamic / Continuous Speculative。防止快速移动对象穿过其他物体（穿模） |
+| `Constraints` | 约束，限制刚体位置/旋转自由度 |
+
+> **碰撞检测模式说明：** `Discrete`（默认，每帧检测，快速物体可能穿透）、`Continuous`（与静态几何体持续检测）、`Continuous Dynamic`（与其他动态刚体持续检测，开销最大）、`Continuous Speculative`（推测性连续检测，性能较好）
 
 ### 13.3 Collider 碰撞器
 
