@@ -556,28 +556,64 @@ Vector3 worldPos = Camera.main.ScreenToWorldPoint(mouseWorld);
 | Friction Combine | 两个物体摩擦力的组合方式：Average平均 / Minimum最小 / Maximum最大 / Multiply相乘 |
 | Bounce Combine | 两个物体弹性的组合方式，规则同摩擦力组合 |
 
----
+### 17.5 刚体加力
 
-
-## 十八、Debug 调试
+#### 施加力与扭矩
 ```csharp
-Debug.Log("普通日志");
-Debug.LogWarning("警告");
-Debug.LogError("错误");
+Rigidbody body = GetComponent<Rigidbody>();
 
----
+// --- 力（Force）---
 
-## 十九、实用代码片段
-```csharp
-// 平滑过渡（Lerp）
-transform.position = Vector3.Lerp(transform.position, target, Time.deltaTime * speed);
+// 世界坐标系方向加力
+body.AddForce(Vector3.forward * 10);
 
-// 物体朝向目标（2D，Z 轴旋转）
-Vector3 dir = target.position - transform.position;
-float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-transform.rotation = Quaternion.Euler(0, 0, angle);
+// 本地坐标系方向加力
+body.AddRelativeForce(Vector3.forward * 10);
 
-// 随机数
-int rand = Random.Range(0, 10);           // int [0, 10)
-float randF = Random.Range(0f, 1f);       // float [0, 1]
+// --- 扭矩（Torque），使物体旋转 ---
+
+// 世界坐标轴扭矩
+body.AddTorque(Vector3.up * 10);
+
+// 本地坐标轴扭矩
+body.AddRelativeTorque(Vector3.up * 10);
+
+// --- 直接修改速度 ---
+body.velocity = Vector3.forward * 5;
+
+// --- 模拟爆炸效果 ---
+// 参数：力的大小、爆炸中心点、影响半径
+body.AddExplosionForce(10, Vector3.zero, 10);
+// 注意：只有挂载了此脚本的物体才会受爆炸力影响
 ```
+
+#### 力的四种模式
+```csharp
+body.AddForce(Vector3.forward * 10, ForceMode.xxx);
+```
+
+| ForceMode | 说明 | 计算公式 |
+|-----------|------|----------|
+| `Force` | 持续力（考虑质量） | `v += F/m × Δt` |
+| `Acceleration` | 持续加速度（忽略质量） | `v += F × Δt` |
+| `Impulse` | 瞬间冲量（考虑质量） | `v += F/m` |
+| `VelocityChange` | 瞬间速度变化（忽略质量） | `v += F` |
+
+> **区分：** `Force` / `Acceleration` 需要在 `FixedUpdate` 中每帧施加；`Impulse` / `VelocityChange` 为瞬时作用，一次调用即生效。
+
+#### Constant Force 组件
+挂载到物体上即可持续施加恒定的力/扭矩，无需代码控制。
+
+> **补充：刚体休眠** — 静止不动的刚体会自动进入休眠状态以节省性能，受到力/碰撞时会自动唤醒。
+> ```csharp
+> // 手动休眠 / 唤醒
+> body.Sleep();             // 立即进入休眠
+> body.WakeUp();            // 立即唤醒
+> body.IsSleeping();        // 返回是否处于休眠状态（C# 属性：body.isSleeping）
+> 
+> // 注意：物体激活状态改变时会自动唤醒刚体
+> // 休眠阈值可在 Edit → Project Settings → Physics 中调整：
+> //   Sleep Threshold：线速度低于此值进入休眠
+> //   Sleep Angular Threshold：角速度低于此值进入休眠
+> ```
+
