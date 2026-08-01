@@ -1,15 +1,15 @@
 ---
 title: Unity 笔记
 published: 2026-07-20
-updated: 2026-07-28
-description: Unity 常用 API 速查 — 生命周期、Transform、Input、Camera、物理等，持续更新中
+updated: 2026-08-01
+description: Unity 常用 API 速查 — 生命周期、Transform、Input、Camera、物理、协程、Debug 等
 tags: [unity, 游戏开发, 基础知识, 速查]
 category: 基础知识
 slug: unity-core-scripting-cheatsheet
 pinned: true
 ---
 
-# Unity 核心开发速查笔记（优化完整版）
+# Unity 核心开发速查笔记
 
 ## 一、MonoBehaviour 生命周期函数
 | 函数 | 执行时机 | 调用次数 | 核心用途 |
@@ -23,46 +23,51 @@ pinned: true
 | `OnDisable` | 对象从激活→失活 | 每次失活都执行 | 注销事件、暂停逻辑 |
 | `OnDestroy` | 对象被销毁时 | 销毁前执行1次 | 释放资源、清理缓存 |
 
-> 补充规则：
-> 1. 场景加载时所有物体先统一执行完 `Awake`，再执行 `Start`
-> 2. 物体 `SetActive(false)` 仅触发 `OnDisable`，不会调用 `OnDestroy`
-> 3. `Destroy()` 默认下一帧才移除对象
+> **补充规则：**
+> 1. 场景加载时所有物体先统一执行完 `Awake`，再统一执行 `Start`
+> 2. `SetActive(false)` 仅触发 `OnDisable`，不会调用 `OnDestroy`
+> 3. `Destroy()` 默认延迟到当前帧末尾才移除对象（非下一帧）
+> 4. 脚本 `enabled = false` 不会触发 `OnDisable`，仅阻止 `Update` 系列调用
 
 ---
 
 ## 二、Inspector 检查器序列化特性
 ### 2.1 基础显示规则
-- `public` 变量：默认显示在 Inspector 面板
-- `private / protected` 变量：默认隐藏，添加 `[SerializeField]` 可强制序列化显示
-- 公共变量隐藏：添加 `[HideInInspector]`
-- 字典、自定义结构体、自定义类默认不可显示，自定义类型需加 `[System.Serializable]`
+- `public` 字段：默认显示在 Inspector 面板
+- `private / protected` 字段：默认隐藏，添加 `[SerializeField]` 可强制序列化显示
+- 隐藏 `public` 字段：添加 `[HideInInspector]`
+- 属性（`{ get; set; }`）：默认不序列化，加 `[field: SerializeField]` 可显示自动属性
+- `Dictionary`、自定义 `struct`、自定义 `class` 默认不显示，自定义类型需标记 `[System.Serializable]`
 
 ### 2.2 常用辅助特性
-\`\`\`csharp
-[Header("分组标题")]        // 变量分组说明
-[Tooltip("悬停提示内容")]    // 鼠标悬停显示注释
-[Space(10)]                 // 空行间隔
-[Range(0, 10)]              // 数值滑条调整范围
-[Multiline(3)]              // 字符串多行显示
-[TextArea(2, 10)]           // 带滚动条的文本域
-[ContextMenuItem("按钮名", "方法名")] // 变量右键菜单
-[ContextMenu("测试函数")]    // 组件右上角快捷测试函数
-\`\`\`
+```csharp
+[Header("分组标题")]                       // 变量分组说明
+[Tooltip("悬停提示内容")]                   // 鼠标悬停显示注释
+[Space(10)]                                // 字段间空行间隔
+[Range(0, 10)]                             // 数值滑条（仅 float/int）
+[Multiline(3)]                             // 字符串多行输入框
+[TextArea(2, 10)]                          // 带滚动条的文本域（minLines, maxLines）
+[ContextMenuItem("按钮名", "方法名")]        // 字段右键菜单
+[ContextMenu("测试函数")]                   // 组件右上角快捷菜单
+[RequireComponent(typeof(Rigidbody))]       // 自动挂载依赖组件
+[DisallowMultipleComponent]                 // 禁止重复挂载到同一物体
+[ExecuteAlways]                             // 编辑器模式也执行生命周期
+```
 
 ---
 
 ## 三、MonoBehaviour 核心成员与方法
 ### 3.1 核心成员变量
-\`\`\`csharp
+```csharp
 gameObject   // 当前脚本挂载的游戏物体
 transform    // 物体的 Transform 变换组件
 enabled      // 脚本自身的启用/禁用状态
 // 示例：this.enabled = false; 禁用脚本
-\`\`\`
+```
 
 ### 3.2 组件获取方法
 #### 获取单个组件（优先泛型写法）
-\`\`\`csharp
+```csharp
 // 1. 泛型获取（推荐，编译安全）
 脚本类型 变量名 = GetComponent<脚本类型>();
 
@@ -77,20 +82,20 @@ if (TryGetComponent<脚本类型>(out 变量名))
 {
     // 获取成功后执行逻辑
 }
-\`\`\`
+```
 
 #### 获取多个组件
-\`\`\`csharp
+```csharp
 // 数组形式
 脚本类型[] 数组名 = GetComponents<脚本类型>();
 
 // 列表形式（复用List减少GC）
 List<脚本类型> 列表名 = new List<脚本类型>();
 GetComponents<脚本类型>(列表名);
-\`\`\`
+```
 
 #### 父子物体组件获取
-\`\`\`csharp
+```csharp
 // 子物体获取（参数true：包含失活物体；默认false：仅激活物体）
 GetComponentInChildren<脚本类型>(true);
 GetComponentsInChildren<脚本类型>(true);
@@ -98,24 +103,24 @@ GetComponentsInChildren<脚本类型>(true);
 // 父物体获取
 GetComponentInParent<脚本类型>();
 GetComponentsInParent<脚本类型>();
-\`\`\`
+```
 
 ---
 
 ## 四、GameObject 游戏物体
 ### 4.1 成员变量
-\`\`\`csharp
+```csharp
 gameObject.name        // 物体名称
 gameObject.activeSelf  // 物体是否激活（只读）
 gameObject.isStatic    // 是否为静态物体
 gameObject.layer       // 物体层级
 gameObject.tag         // 物体标签
 gameObject.transform   // 变换组件引用
-\`\`\`
+```
 
 ### 4.2 静态方法
 #### 创建与查找
-\`\`\`csharp
+```csharp
 // 创建内置几何体
 GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
 
@@ -123,10 +128,10 @@ GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
 GameObject obj = GameObject.Find("物体名");
 GameObject obj = GameObject.FindWithTag("标签名");
 GameObject[] objs = GameObject.FindGameObjectsWithTag("标签名");
-\`\`\`
+```
 
 #### 实例化与销毁
-\`\`\`csharp
+```csharp
 // 克隆/实例化物体
 GameObject clone = Instantiate(预制体对象);
 
@@ -139,10 +144,10 @@ DestroyImmediate(游戏物体);
 
 // 切换场景不销毁该物体
 DontDestroyOnLoad(gameObject);
-\`\`\`
+```
 
 ### 4.3 成员方法
-\`\`\`csharp
+```csharp
 // 创建空物体
 GameObject empty = new GameObject();
 GameObject obj = new GameObject("物体名", typeof(Rigidbody), typeof(BoxCollider));
@@ -156,7 +161,7 @@ if (gameObject.CompareTag("Player")) { }
 // 设置激活/失活
 gameObject.SetActive(true);
 gameObject.SetActive(false);
-\`\`\`
+```
 
 > 不常用方法：`SendMessage`、`SendMessageUpwards`，性能差且不易维护，不推荐使用。
 
@@ -169,35 +174,46 @@ gameObject.SetActive(false);
 | `Time.unscaledDeltaTime` | 不受时间缩放的帧间隔 | ❌ |
 | `Time.time` | 游戏开始到当前的总时间 | ✅ |
 | `Time.unscaledTime` | 不受时间缩放的总时间 | ❌ |
-| `Time.fixedDeltaTime` | 物理帧间隔时间 | ✅ |
-| `Time.frameCount` | 游戏运行总帧数 | - |
-| `Time.timeScale` | 时间缩放比例（0=暂停，1=正常，2=倍速） | - |
+| `Time.fixedDeltaTime` | 物理帧间隔（默认 0.02s = 50FPS） | 只读 |
+| `Time.fixedUnscaledDeltaTime` | 不受时间缩放的物理帧间隔 | ❌ |
+| `Time.frameCount` | 游戏运行总帧数 | — |
+| `Time.timeScale` | 时间缩放（0=暂停，1=正常，2=2倍速） | — |
+| `Time.smoothDeltaTime` | 平滑后的 deltaTime（用于 UI 帧率显示） | ✅ |
 
-> 核心公式：**路程 = 速度 × 时间**，位移必须乘 `Time.deltaTime` 保证不同帧率下速度一致。
+> **核心公式：位移 = 速度 × 时间**
+> ```csharp
+> transform.position += direction * speed * Time.deltaTime;
+> ```
 
 ---
 
 ## 六、位置与位移
-### 6.1 Vector3 三维向量
-\`\`\`csharp
+### 6.1 Vector3 常用操作
+```csharp
 // 构造
 Vector3 pos = new Vector3(x, y, z);
 
-// 常用常量
-Vector3.zero     // (0,0,0) 原点
-Vector3.right    // (1,0,0) X轴正方向
-Vector3.left     // (-1,0,0)
-Vector3.up       // (0,1,0) Y轴正方向
-Vector3.down     // (0,-1,0)
-Vector3.forward  // (0,0,1) Z轴正方向
-Vector3.back     // (0,0,-1)
+// 常用方向常量
+Vector3.zero     // (0, 0, 0)
+Vector3.one      // (1, 1, 1)
+Vector3.right    // (1, 0, 0)  世界 X 轴正方向
+Vector3.left     // (-1, 0, 0)
+Vector3.up       // (0, 1, 0)  世界 Y 轴正方向
+Vector3.down     // (0, -1, 0)
+Vector3.forward  // (0, 0, 1)  世界 Z 轴正方向
+Vector3.back     // (0, 0, -1)
 
-// 计算两点距离
-float distance = Vector3.Distance(pointA, pointB);
-\`\`\`
+// 常用计算
+float distance = Vector3.Distance(a, b);       // 两点距离
+Vector3 dir = (target - origin).normalized;     // 归一化方向
+Vector3 lerp = Vector3.Lerp(a, b, t);          // 线性插值
+Vector3 move = Vector3.MoveTowards(cur, target, maxDelta); // 匀速逼近
+float dot = Vector3.Dot(a, b);                 // 点积（判断前后/夹角）
+Vector3 cross = Vector3.Cross(a, b);           // 叉积（求法线/垂直方向）
+```
 
 ### 6.2 位置坐标
-\`\`\`csharp
+```csharp
 transform.position       // 世界坐标系位置
 transform.localPosition  // 相对父物体的本地坐标（面板显示值）
 
@@ -205,67 +221,81 @@ transform.localPosition  // 相对父物体的本地坐标（面板显示值）
 transform.forward  // 物体正前方
 transform.up       // 物体正上方
 transform.right    // 物体正右方
-\`\`\`
+```
 
-> 注意：不能直接修改 position 的单个分量（如 `position.x = 5`），必须整体赋值：
-> \`\`\`csharp
+> **注意：** `transform.position` 是 struct 属性，不能直接修改单个分量：
+> ```csharp
+> // ❌ 错误
+> transform.position.x = 5;
+> // ✅ 正确
 > transform.position = new Vector3(5, transform.position.y, transform.position.z);
-> \`\`\`
+> ```
 
 ### 6.3 位移移动
-\`\`\`csharp
+```csharp
 // 方式1：直接计算
 transform.position += transform.forward * speed * Time.deltaTime;
 
 // 方式2：Translate API（第二参数可选 Space.Self / Space.World）
 transform.Translate(Vector3.forward * speed * Time.deltaTime, Space.Self);
-\`\`\`
+```
 
 ---
 
 ## 七、角度与旋转
-### 7.1 欧拉角
-\`\`\`csharp
+### 7.1 欧拉角与四元数
+```csharp
+// 欧拉角（直观但可能有万向锁）
 transform.eulerAngles       // 世界坐标系欧拉角
 transform.localEulerAngles  // 相对父物体的本地欧拉角
-\`\`\`
+
+// 四元数（推荐，无万向锁）
+transform.rotation          // 世界坐标系旋转（Quaternion）
+transform.localRotation     // 相对父物体的旋转（Quaternion）
+Quaternion.identity         // 无旋转
+```
 
 ### 7.2 旋转方法
-\`\`\`csharp
+```csharp
 // 自转（绕自身轴旋转）
 transform.Rotate(new Vector3(0, 90, 0) * Time.deltaTime);
+transform.Rotate(Vector3.up, 30f * Time.deltaTime);  // 绕指定世界轴
 
-// 绕指定轴旋转
-transform.Rotate(Vector3.up, 30f * Time.deltaTime);
-
-// 绕指定点+指定轴旋转（公转）
+// 绕指定点公转
 transform.RotateAround(Vector3.zero, Vector3.up, 20f * Time.deltaTime);
-\`\`\`
+
+// 常用四元数旋转
+transform.rotation = Quaternion.Euler(0, 45, 0);               // 欧拉角 → 四元数
+transform.rotation = Quaternion.LookRotation(forward, up);      // 朝向方向
+Quaternion target = Quaternion.FromToRotation(from, to);        // 从方向A转到B
+Quaternion lerp = Quaternion.Lerp(a, b, t);                    // 线性插值
+Quaternion slerp = Quaternion.Slerp(a, b, t);                  // 球面插值（旋转更平滑）
+```
 
 ---
 
 ## 八、缩放与看向
 ### 8.1 缩放
-\`\`\`csharp
+```csharp
 transform.localScale    // 本地缩放（可读写）
 transform.lossyScale    // 世界总缩放（只读，不可赋值）
 
 // 缩放无专用渐变API，自行计算
 transform.localScale += Vector3.one * Time.deltaTime;
-\`\`\`
+```
 
 ### 8.2 LookAt 看向
-\`\`\`csharp
+```csharp
 // 让物体Z轴朝向目标点/目标物体
 transform.LookAt(targetPosition);
 transform.LookAt(targetTransform);
-\`\`\`
+```
 
 ---
 
 ## 九、父子关系
 ### 9.1 父对象操作
-\`\`\`csharp
+```csharp
 // 获取父物体
 Transform parent = transform.parent;
 
@@ -274,10 +304,10 @@ transform.parent = null;
 
 // 设置父物体（第二参数：是否保留世界坐标/旋转/缩放）
 transform.SetParent(newParent, true);
-\`\`\`
+```
 
 ### 9.2 子对象操作
-\`\`\`csharp
+```csharp
 // 解除所有子物体
 transform.DetachChildren();
 
@@ -286,21 +316,21 @@ Transform child = transform.Find("子物体名");
 
 // 按索引获取子物体
 Transform firstChild = transform.GetChild(0);
-\`\`\`
+```
 
 ### 9.3 子物体层级排序
-\`\`\`csharp
+```csharp
 child.IsChildOf(parent);        // 判断是否为子物体
 child.GetSiblingIndex();        // 获取自身索引
 child.SetAsFirstSibling();      // 设为第一个子物体
 child.SetAsLastSibling();       // 设为最后一个子物体
 child.SetSiblingIndex(2);       // 设为指定索引位置
-\`\`\`
+```
 
 ---
 
 ## 十、坐标转换
-\`\`\`csharp
+```csharp
 // 世界坐标 → 本地坐标
 Vector3 localPos = transform.InverseTransformPoint(worldPos);
 Vector3 localDir = transform.InverseTransformDirection(worldDir);
@@ -308,13 +338,16 @@ Vector3 localDir = transform.InverseTransformDirection(worldDir);
 // 本地坐标 → 世界坐标
 Vector3 worldPos = transform.TransformPoint(localPos);
 Vector3 worldDir = transform.TransformDirection(localDir);
-\`\`\`
+```
 
 ---
 
-## 十一、输入系统 Input
+## 十一、输入系统 Input（旧版）
+
+> **注意：** 以下为旧版 Input Manager API，适合快速原型。新项目推荐使用 **Input System** 包（`UnityEngine.InputSystem`），支持事件驱动、多设备映射、Input Action 资产管理。
+
 ### 11.1 鼠标输入
-\`\`\`csharp
+```csharp
 // 鼠标屏幕位置（左下角为原点，z恒为0）
 Vector3 mousePos = Input.mousePosition;
 
@@ -325,35 +358,35 @@ Input.GetMouseButtonUp(0);    // 抬起瞬间触发
 
 // 鼠标滚轮
 Input.mouseScrollDelta.y; // -1向下，0无操作，1向上
-\`\`\`
+```
 
 ### 11.2 键盘输入
-\`\`\`csharp
+```csharp
 Input.GetKey(KeyCode.W);          // 按住持续触发
 Input.GetKeyDown(KeyCode.Space);  // 按下瞬间触发
 Input.GetKeyUp(KeyCode.Space);    // 抬起瞬间触发
-\`\`\`
+```
 
 ### 11.3 轴输入
-\`\`\`csharp
+```csharp
 // 平滑过渡，返回 -1 ~ 1
 float h = Input.GetAxis("Horizontal");
 float v = Input.GetAxis("Vertical");
 
 // 无过渡，仅 -1 / 0 / 1 三档
 float hRaw = Input.GetAxisRaw("Horizontal");
-\`\`\`
+```
 
 ### 11.4 其他输入
-\`\`\`csharp
+```csharp
 Input.anyKey;        // 任意键/鼠标按住
 Input.anyKeyDown;    // 任意键/鼠标按下瞬间
 Input.inputString;   // 本帧键盘输入字符
 Input.GetJoystickNames(); // 获取已连接手柄名称
-\`\`\`
+```
 
 ### 11.5 移动端输入
-\`\`\`csharp
+```csharp
 // 触摸检测
 if (Input.touchCount > 0)
 {
@@ -365,13 +398,13 @@ Input.multiTouchEnabled = false; // 禁用多点触控
 // 陀螺仪
 Input.gyro.enabled = true;
 Input.gyro.gravity; // 重力加速度向量
-\`\`\`
+```
 
 ---
 
 ## 十二、Screen 屏幕系统
 ### 12.1 静态属性
-\`\`\`csharp
+```csharp
 // 当前显示器分辨率
 Resolution res = Screen.currentResolution;
 int width = res.width;
@@ -386,13 +419,13 @@ Screen.sleepTimeout = SleepTimeout.NeverSleep; // 永不熄屏
 
 // 全屏模式
 Screen.fullScreenMode = FullScreenMode.FullScreenWindow;
-\`\`\`
+```
 
 ### 12.2 静态方法
-\`\`\`csharp
+```csharp
 // 设置分辨率（宽，高，是否全屏）
 Screen.SetResolution(1920, 1080, false);
-\`\`\`
+```
 
 ---
 
@@ -417,7 +450,7 @@ Screen.SetResolution(1920, 1080, false);
 
 ## 十四、Camera 代码 API
 ### 14.1 静态成员
-\`\`\`csharp
+```csharp
 Camera.main;          // 获取标签为 MainCamera 的主摄像机
 Camera.allCamerasCount; // 场景中摄像机总数
 Camera[] allCams = Camera.allCameras; // 所有摄像机数组
@@ -426,10 +459,10 @@ Camera[] allCams = Camera.allCameras; // 所有摄像机数组
 Camera.onPreCull += cam => { /* 剔除前 */ };
 Camera.onPreRender += cam => { /* 渲染前 */ };
 Camera.onPostRender += cam => { /* 渲染后 */ };
-\`\`\`
+```
 
 ### 14.2 坐标转换
-\`\`\`csharp
+```csharp
 // 世界坐标 → 屏幕坐标（常用于血条跟随）
 Vector3 screenPos = Camera.main.WorldToScreenPoint(transform.position);
 
@@ -437,7 +470,7 @@ Vector3 screenPos = Camera.main.WorldToScreenPoint(transform.position);
 Vector3 mouseWorld = Input.mousePosition;
 mouseWorld.z = 5f;
 Vector3 worldPos = Camera.main.ScreenToWorldPoint(mouseWorld);
-\`\`\`
+```
 
 ---
 
@@ -525,4 +558,26 @@ Vector3 worldPos = Camera.main.ScreenToWorldPoint(mouseWorld);
 
 ---
 
-> 优化说明：修正全文拼写错误，统一代码格式与命名规范，补充表格对比与使用注意事项，新增摄像机高级参数、刚体完整属性、碰撞器分类与物理材质等内容。
+
+## 十八、Debug 调试
+```csharp
+Debug.Log("普通日志");
+Debug.LogWarning("警告");
+Debug.LogError("错误");
+
+---
+
+## 十九、实用代码片段
+```csharp
+// 平滑过渡（Lerp）
+transform.position = Vector3.Lerp(transform.position, target, Time.deltaTime * speed);
+
+// 物体朝向目标（2D，Z 轴旋转）
+Vector3 dir = target.position - transform.position;
+float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+transform.rotation = Quaternion.Euler(0, 0, angle);
+
+// 随机数
+int rand = Random.Range(0, 10);           // int [0, 10)
+float randF = Random.Range(0f, 1f);       // float [0, 1]
+```
