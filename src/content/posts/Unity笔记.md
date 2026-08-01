@@ -1,5 +1,5 @@
 ---
-title: Unity 笔记
+title: Unity 入门阶段笔记 Stage 1
 published: 2026-07-20
 updated: 2026-08-01
 description: Unity 常用 API 速查 — 生命周期、Transform、Input、Camera、物理、协程、Debug 等
@@ -9,7 +9,7 @@ slug: unity-core-scripting-cheatsheet
 pinned: true
 ---
 
-# Unity 核心开发速查笔记
+# Unity 入门阶段笔记 Stage 1
 
 ## 一、MonoBehaviour 生命周期函数
 | 函数 | 执行时机 | 调用次数 | 核心用途 |
