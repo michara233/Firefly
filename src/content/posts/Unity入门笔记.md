@@ -614,6 +614,6 @@ body.AddForce(Vector3.forward * 10, ForceMode.xxx);
 > // 注意：物体激活状态改变时会自动唤醒刚体
 > // 休眠阈值可在 Edit → Project Settings → Physics 中调整：
 > //   Sleep Threshold：线速度低于此值进入休眠
-> //   Sleep Angular Threshold：角速度低于此值进入休眠
+> //   Sleep Angular Threshold：角速度低于此值进入休眠1
 > ```
 
