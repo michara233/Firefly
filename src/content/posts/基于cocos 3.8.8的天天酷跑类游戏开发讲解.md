@@ -16,7 +16,7 @@ slug: 基于cocos 3.8.8的天天酷跑类游戏开发讲解
 
 ### 1.加载场景
 
-![加载场景示例](./images/cocos-loading-scene.png)
+![加载场景示例](./images/cocos/cocos-loading-scene.png)
 
 以logo也就是开屏动画场景举例
 
@@ -107,32 +107,94 @@ export class Logo extends Component {
 
 ##### A.右键文件夹创造动画剪辑文件
 
-![创建动画剪辑](./images/cocos-create-animation-clip.png)
+![创建动画剪辑](./images/cocos/cocos-create-animation-clip.png)
 
 ##### B.在需要动画的节点上添加动画组件（Animation）
 
-![添加动画组件](./images/cocos-add-animation-component.png)
+![添加动画组件](./images/cocos/cocos-add-animation-component.png)
 
 （点击右侧属性检查器下的添加组件）
 
 ##### c.打开动画编辑器
 
-![打开动画编辑器](./images/cocos-open-animation-editor.png)
+![打开动画编辑器](./images/cocos/cocos-open-animation-editor.png)
 
 ##### D.进入动画编辑模式，并添加属性列表点击color
 
-![动画编辑模式](./images/cocos-animation-edit-mode.png)
+![动画编辑模式](./images/cocos/cocos-animation-edit-mode.png)
 
 ##### E.在第零帧添加关键帧（左侧红色列表的那条蛆右边的菱形就是添加关键帧）
 
 点击色块打开颜色编辑，将A的值拖动到0
 
-![第0帧关键帧](./images/cocos-keyframe-0.png)
+![第0帧关键帧](./images/cocos/cocos-keyframe-0.png)
 
 在第60帧（这里设置的是1秒60帧，，可以计算下渐变时间），添加关键帧，将A拖到255
 
-![第60帧关键帧](./images/cocos-keyframe-60.png)
+![第60帧关键帧](./images/cocos/cocos-keyframe-60.png)
 
 ###### F.最后记得将循环模式设为直播放一遍，并在右侧动画组件勾选加载后播放即可
 
 ![循环模式设置](./images/cocos-play-on-load.png)
+
+
+## 2️⃣.进入游戏界面
+
+![image-20260830195919927](./images/cocos/image-20260830195919927.png)
+
+### 1.在左侧节点树创建按钮节点，创建位置如图
+
+![image-20260830200050548](./images/cocos/image-20260830200050548.png)
+
+**此项目没有联网功能，所以此处两个按钮的脚本一致**
+
+### 2.为按钮添加脚本，用来跳转场景
+
+```typescript
+import { _decorator, Component, Node, director } from 'cc';
+
+const { ccclass, property } = _decorator;
+
+@ccclass('startbuttom')
+export class startbuttom extends Component {
+   @property
+   public Name: string = "main_menu";	//主界面名称
+   start() {
+
+   }
+
+   update(deltaTime: number) {
+       
+   }
+   onbuttonclick(){					//点击后触发
+      director.loadScene(this.Name);	//加载场景"start"
+   }
+}
+```
+
+### 3.拼UI~
+
+把素材通过2d精灵节点放置就好，没有难度
+
+
+
+## 3️⃣.主界面
+
+![image-20260830200842242](./images/cocos/image-20260830200842242.png)
+
+**本项目没有涉及单例模式，所以货币等为固定值**
+
+### 1.拼ui~
+
+不赘述
+
+
+
+### 2.添加按钮，跳转游戏界面
+
+操作同**进入游戏界面**的按钮步骤
+
+
+
+## 4️⃣关卡内界面
+
