@@ -136,7 +136,7 @@ export class Logo extends Component {
 
 ###### F.最后记得将循环模式设为直播放一遍，并在右侧动画组件勾选加载后播放即可
 
-![循环模式设置](./images/cocos-play-on-load.png)
+![循环模式设置](./images/cocos/cocos-play-on-load.png)
 
 
 ## 2️⃣.进入游戏界面
