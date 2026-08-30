@@ -1,11 +1,12 @@
 ---
 title: 基于cocos 3.8.8的飞机大战类游戏开发讲解
 published: 2026-07-20
+updated: 2026-08-30
 pinned: false
 description: cocos，不赖。
 tags: [cocos, 游戏开发]
 category: 特定功能实现
-image: ./images/cocos.gif
+image: ./images/cocos/cocos.gif
 slug: 基于cocos 3.8.8的飞机大战类游戏开发讲解
 ---
 # **基于cocos 3.8.8的飞机大战类游戏开发讲解**
