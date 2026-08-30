@@ -99,6 +99,7 @@ export class Logo extends Component {
     director.loadScene("loginScene");
 
   }
+}
 ```
 
 
