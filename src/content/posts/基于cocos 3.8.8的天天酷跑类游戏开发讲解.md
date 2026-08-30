@@ -1,20 +1,20 @@
 ---
-title: 基于cocos 3.8.8的天天酷跑类游戏开发讲解
+title: 基于cocos 3.8.8的飞机大战类游戏开发讲解
 published: 2026-07-20
 pinned: false
 description: cocos，不赖。
 tags: [cocos, 游戏开发]
 category: 特定功能实现
 image: ./images/cocos.gif
-slug: 基于cocos 3.8.8的天天酷跑类游戏开发讲解
+slug: 基于cocos 3.8.8的飞机大战类游戏开发讲解
 ---
-# **基于cocos 3.8.8的天天酷跑类游戏开发讲解**
+# **基于cocos 3.8.8的飞机大战类游戏开发讲解**
 
-小游戏的首选，试了下与unity还是有许多相似之处的，遂记录。
+小游戏的首选，本项目为尝试作较为粗糙，试了下与unity还是有许多相似之处的，遂记录。
 
-## 以下从功能的顺序开始讲解
+ 以下从功能的顺序开始讲解
 
-### 1.加载场景
+## 1️⃣.加载场景
 
 ![加载场景示例](./images/cocos/cocos-loading-scene.png)
 
